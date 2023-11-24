@@ -26,6 +26,8 @@ Star _star;
 int lives = STARTING_LIVES;
 int score = 0;
 int new_score = 0;
+float new_time = INITIAL_TIME_BETWEEN_ASTEROIDS;
+int min_asteroid_speed; 
 
 // Load resources
 void LoadGame(void)
@@ -97,19 +99,30 @@ void UpdateGame(void)
             _asteroidSpawnTimer -= GetFrameTime();
             if (_asteroidSpawnTimer < 0)
             {
-                _asteroidSpawnTimer = TIME_BETWEEN_ASTEROIDS;
-                int min_asteroid_speed = new_score * 0.5 + INITIAL_ASTEROID_SPEED; 
+                if (new_time > MAX_TIME_TIME_BETWEEN_ASTEROIDS)
+                {
+                    new_time = new_score * (-0.0007) + INITIAL_TIME_BETWEEN_ASTEROIDS;
+                }
+                //new_time = fmax(new_time, MAX_TIME_TIME_BETWEEN_ASTEROIDS);
+                _asteroidSpawnTimer = new_time;
+                if (min_asteroid_speed < MAX_ASTEROID_SPEED)
+                {
+                    min_asteroid_speed = new_score * 0.35 + INITIAL_ASTEROID_SPEED; 
+                }
                 int max_asteroid_speed = min_asteroid_speed + ASTEROID_SPEED_RANGE; 
                 int speed = GetRandomValue(min_asteroid_speed, max_asteroid_speed);
+                //speed = fmin(speed, MAX_ASTEROID_SPEED);
                 SpawnAsteroid(asteroids, speed);
             }
             UpdateAsteroids();
         }
        
-       if (score > new_score + 200)
+       if (score >= new_score + 100)
        {
             new_score = score;
-            //printf("");
+            printf("INCREASING DIFFICULTY\n");
+            printf("NEW SPEED: %d\n", min_asteroid_speed);
+            printf("NEW TIMEL: %f\n", new_time);
        }
         
     }
@@ -129,10 +142,6 @@ void DrawGame(void)
     }
     else
     {
-        //const char* timerText = TextFormat("Asteroid timer: %f", _asteroidSpawnTimer);
-        //const char* asteroidSpeed = TextFormat("Asteroid timer: %f", _asteroidSpawnTimer);
-        //DrawText(timerText, 0, 20, 20, GREEN);
-
         // Draw spaceship 
         DrawTexturePro(_ship_texture,
                         SPACESHIP_SOURCE_RECT,
