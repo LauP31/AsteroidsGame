@@ -53,6 +53,8 @@ void GameStart(void)
 
     score = 0;
     lives = STARTING_LIVES;
+    new_score = 0;
+    new_time = INITIAL_TIME_BETWEEN_ASTEROIDS;
 
     // Intialize spaceship
     _ship.acceleration = (Vector2){0,0};
@@ -122,7 +124,7 @@ void UpdateGame(void)
             new_score = score;
             printf("INCREASING DIFFICULTY\n");
             printf("NEW SPEED: %d\n", min_asteroid_speed);
-            printf("NEW TIMEL: %f\n", new_time);
+            printf("NEW TIME: %f\n", new_time);
        }
         
     }
