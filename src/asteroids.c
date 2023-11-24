@@ -35,9 +35,8 @@ void DrawAsteroids(Asteroid* asteroids, Texture2D texture)
                         (Vector2){ASTEROID_RECT_WIDTH/2, ASTEROID_RECT_HEIGHT/2},
                         asteroids[i].rotation,
                         WHITE);
-
         //DrawTexture(texture, position.x, position.y, WHITE);
-        DrawCircleLines(asteroids[i].position.x, asteroids[i].position.y, asteroids[i].radius, WHITE);
+        //DrawCircleLines(asteroids[i].position.x, asteroids[i].position.y, asteroids[i].radius, WHITE);
     }
 }
 
