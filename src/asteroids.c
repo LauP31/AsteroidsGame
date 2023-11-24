@@ -33,7 +33,7 @@ void DrawAsteroids(Asteroid* asteroids, Texture2D texture)
     }
 }
 
-void SpawnAsteroid(Asteroid* asteroids)
+void SpawnAsteroid(Asteroid* asteroids, int speed)
 {
     int avaliableIndex = -1;
     for (int i = 0; i < MAX_ASTEROIDS; i++)
@@ -47,7 +47,6 @@ void SpawnAsteroid(Asteroid* asteroids)
     
     if (avaliableIndex == -1) return;
 
-    int speed = GetRandomValue(400, 550);
     int posX = GetRandomValue(ASTEROID_RECT_WIDTH / 2, SCREEN_WIDTH - ASTEROID_RECT_WIDTH / 2);
     
     SetAsteroidAt(asteroids, avaliableIndex, (Vector2){posX, -200}, speed, 35);

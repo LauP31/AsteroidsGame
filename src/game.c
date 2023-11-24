@@ -4,6 +4,7 @@
 #include "spaceship.h"
 #include "asteroids.h"
 #include "star.h"
+#include <stdio.h>
 
 GameState _state;
 
@@ -24,6 +25,7 @@ Star _star;
 
 int lives = STARTING_LIVES;
 int score = 0;
+int new_score = 0;
 
 // Load resources
 void LoadGame(void)
@@ -96,10 +98,19 @@ void UpdateGame(void)
             if (_asteroidSpawnTimer < 0)
             {
                 _asteroidSpawnTimer = TIME_BETWEEN_ASTEROIDS;
-                SpawnAsteroid(asteroids);
+                int min_asteroid_speed = new_score * 0.5 + INITIAL_ASTEROID_SPEED; 
+                int max_asteroid_speed = min_asteroid_speed + ASTEROID_SPEED_RANGE; 
+                int speed = GetRandomValue(min_asteroid_speed, max_asteroid_speed);
+                SpawnAsteroid(asteroids, speed);
             }
             UpdateAsteroids();
         }
+       
+       if (score > new_score + 200)
+       {
+            new_score = score;
+            //printf("");
+       }
         
     }
 }
@@ -118,6 +129,10 @@ void DrawGame(void)
     }
     else
     {
+        //const char* timerText = TextFormat("Asteroid timer: %f", _asteroidSpawnTimer);
+        //const char* asteroidSpeed = TextFormat("Asteroid timer: %f", _asteroidSpawnTimer);
+        //DrawText(timerText, 0, 20, 20, GREEN);
+
         // Draw spaceship 
         DrawTexturePro(_ship_texture,
                         SPACESHIP_SOURCE_RECT,
@@ -182,6 +197,6 @@ void UpdateStar()
     if (CheckCollisionCircles(_ship.position, _ship.radius, _star.position, _star.radius))
     {
         MoveStar(&_star);
-        score += 10;
+        score += SCORE_PER_STAR;
     }
 }

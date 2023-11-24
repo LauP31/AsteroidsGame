@@ -17,7 +17,7 @@ typedef struct Asteroid
 void SetAsteroidAt(Asteroid* asteroids, int i, Vector2 position, int speed, int radius);
 void UnsetAsteroidAt(Asteroid* asteroids, int i);
 void DrawAsteroids(Asteroid* asteroids, Texture2D texture);
-void SpawnAsteroid(Asteroid* asteroids);
+void SpawnAsteroid(Asteroid* asteroids, int speed);
 void ClearAsteroids(Asteroid* asteroids);
 
 #endif
