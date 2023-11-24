@@ -9,6 +9,7 @@ void SetAsteroidAt(Asteroid* asteroids, int i, Vector2 position, int speed, int 
     asteroids[i].speed = speed;
     asteroids[i].active = true;
     asteroids[i].radius = radius;
+    asteroids[i].rotation = GetRandomValue(0, 360);
 }
 
 void UnsetAsteroidAt(Asteroid * asteroids, int i)
@@ -28,8 +29,15 @@ void DrawAsteroids(Asteroid* asteroids, Texture2D texture)
         Vector2 position = asteroids[i].position;
         position.x -= ASTEROID_RECT_WIDTH / 2;
         position.y -= ASTEROID_RECT_HEIGHT / 2;
-        DrawTexture(texture, position.x, position.y, WHITE);
-        //DrawCircleLines(asteroids[i].position.x, asteroids[i].position.y, asteroids[i].radius, WHITE);
+        DrawTexturePro(texture,
+                        ASTEROID_SOURCE_RECT,
+                        (Rectangle){asteroids[i].position.x, asteroids[i].position.y, ASTEROID_RECT_WIDTH, ASTEROID_RECT_HEIGHT},
+                        (Vector2){ASTEROID_RECT_WIDTH/2, ASTEROID_RECT_HEIGHT/2},
+                        asteroids[i].rotation,
+                        WHITE);
+
+        //DrawTexture(texture, position.x, position.y, WHITE);
+        DrawCircleLines(asteroids[i].position.x, asteroids[i].position.y, asteroids[i].radius, WHITE);
     }
 }
 

@@ -10,6 +10,7 @@ typedef struct Asteroid
     int radius;
     int speed;
     bool active;
+    float rotation;
 
 } Asteroid;
 
