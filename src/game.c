@@ -29,7 +29,6 @@ int new_score = 0;
 float new_time = INITIAL_TIME_BETWEEN_ASTEROIDS;
 int min_asteroid_speed; 
 
-// Load resources
 void LoadGame(void)
 {
     _ship_texture = LoadTexture("resources/playerShip1_blue.png");
@@ -37,7 +36,6 @@ void LoadGame(void)
     _starTexture = LoadTexture("resources/star_gold.png");
 }
 
-// Unload resources
 void UnloadGame(void)
 {
     UnloadTexture(_ship_texture);
@@ -45,7 +43,6 @@ void UnloadGame(void)
     UnloadTexture(_starTexture);
 }
 
-// Called when game starts
 void GameStart(void)
 {
     _state = PLAYING;
@@ -72,7 +69,6 @@ void GameStart(void)
 
 }
 
-// Called when game ends
 void GameEnd(void)
 {
     _state = END;
@@ -80,12 +76,10 @@ void GameEnd(void)
     ClearAsteroids(asteroids);
 }
 
-// Called every frame
 void UpdateGame(void)
 {
     if (_state == END)
     {   
-        // Restart game check
         if (IsKeyPressed(KEY_R))
         {
             GameStart();
@@ -130,12 +124,10 @@ void UpdateGame(void)
     }
 }
 
-// Called every draw frame
 void DrawGame(void)
 {   
     ClearBackground(BACKGROUND_COLOR);
     DrawFPS(0,0);
-    // Draw different screens depending on game state
     if (_state == END)
     {
         const char* scoreText = TextFormat("Highscore: %d", score);
