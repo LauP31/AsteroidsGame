@@ -3,9 +3,6 @@
 
 // Game parameters and settings
 
-// f(x) = 0.25x+300 -> asteroid speed
-// f(x) = 1.4-0.0005x -> time decrease
-
 #define SCREEN_WIDTH 1000
 #define SCREEN_HEIGHT 1000
 #define TARGET_FPS 75
@@ -20,7 +17,7 @@
 #define SPACESHIP_COL_RADIUS 35
 #define SPACESHIP_ACCEL 2000
 #define SPACESHIP_MIN_VEL 0
-#define SPACESHIP_MAX_VEL 700
+#define SPACESHIP_MAX_VEL 900
 
 #define MAX_ASTEROIDS 6
 #define ASTEROID_RECT_WIDTH 98
@@ -32,4 +29,5 @@
 #define ASTEROID_SPEED_RANGE 100
 #define MAX_ASTEROID_SPEED 700
 
+#define PARTICLE_SPAWN_RATE 0.1
 #endif

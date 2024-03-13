@@ -5,6 +5,8 @@
 #include "asteroids.h"
 #include "star.h"
 #include <stdio.h>
+#include <math.h>
+#include "particles.h"
 
 GameState _state;
 
@@ -23,17 +25,48 @@ Spaceship _ship;
 Asteroid asteroids[MAX_ASTEROIDS];
 Star _star;
 
+
+ParticleSystem starParticles;
+ParticleSystem rocketParticles;
+
 int lives = STARTING_LIVES;
 int score = 0;
 int new_score = 0;
 float new_time = INITIAL_TIME_BETWEEN_ASTEROIDS;
-int min_asteroid_speed; 
+int min_asteroid_speed;
+
 
 void LoadGame(void)
 {
     _ship_texture = LoadTexture("resources/playerShip1_blue.png");
     _asteroidTexture = LoadTexture("resources/meteorBrown_big4.png");
     _starTexture = LoadTexture("resources/star_gold.png");
+
+    starParticles = (ParticleSystem){
+        .max_particles = 120,
+        .lifetime = 12.5,
+        .min_size = 3,
+        .initial_color = WHITE,
+        .min_speed = 80,
+        .origin = (Vector2){0, 0},
+        .emitterType = RECTANGLE_EMITTER,
+        .emitter.rectangleEmitter.width = 1000,
+        .emitter.rectangleEmitter.height = 1000        
+    };
+
+    rocketParticles = (ParticleSystem){
+        .emitterType = RECTANGLE_EMITTER,
+        .max_particles = 100,
+        .lifetime = 0.5,
+        .min_size = 2,
+        .initial_color = ORANGE,
+        .min_speed = 200,
+        .origin = (Vector2){-50,-50},
+        .emitter.rectangleEmitter.width = 15
+    };
+
+    InitializeParticles(&starParticles);
+    InitializeParticles(&rocketParticles);
 }
 
 void UnloadGame(void)
@@ -41,6 +74,8 @@ void UnloadGame(void)
     UnloadTexture(_ship_texture);
     UnloadTexture(_asteroidTexture);
     UnloadTexture(_starTexture);
+    FreeParticles(&starParticles);
+    FreeParticles(&rocketParticles);
 }
 
 void GameStart(void)
@@ -89,6 +124,9 @@ void UpdateGame(void)
     {
         UpdateSpaceship(&_ship);
         UpdateStar();
+        UpdateParticleSystem(&starParticles);
+        UpdateParticleSystem(&rocketParticles);
+        rocketParticles.origin = (Vector2){_ship.position.x + 42, _ship.position.y + 75};
         // Spawn asteroids once the player has collected at least one star
         if (score > 0)
         {
@@ -131,11 +169,20 @@ void DrawGame(void)
     if (_state == END)
     {
         const char* scoreText = TextFormat("Highscore: %d", score);
-        DrawText(scoreText, SCREEN_WIDTH/2-100, 0, 48, WHITE);
-        DrawText("Press R to restart.", SCREEN_WIDTH/2-100, 50, 48, WHITE);
+        DrawText(scoreText, SCREEN_WIDTH/2-MeasureText(scoreText, 48)*0.5, 400, 48, WHITE);
+        float opacity = sin(GetTime()*2);
+        int alpha = 50+fabs(100*opacity); 
+        DrawText("Press R to restart.", SCREEN_WIDTH/2-MeasureText("Press R to restart.", 48)*0.5, 450, 48, (Color){255, 255, 255, alpha});
     }
     else
     {
+
+        DrawParticleSystem(&starParticles);
+
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+        {
+            DrawParticleSystem(&rocketParticles);
+        }
         // Draw spaceship 
         DrawTexturePro(_ship_texture,
                         SPACESHIP_SOURCE_RECT,

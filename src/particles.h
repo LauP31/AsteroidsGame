@@ -5,57 +5,70 @@
 #include <stdlib.h>
 
 
-
 typedef struct Particle {
 
     Vector2 position;
-    float velocity;
-    float size;
-    float color;
+    Vector2 velocity;
+    float lifetime;
     bool active; 
 
 } Particle;
 
+
+typedef struct RectangleEmitter
+{
+    float width;
+    float height;
+    float angle;
+} RectangleEmitter;
+
+typedef struct CircleEmitter
+{
+    float radius;
+} CircleEmitter;
+
+typedef struct ConeEmitter
+{
+    float angle;
+    float apperture_angle;
+} ConeEmitter;
+
 typedef struct ParticleSystem {
 
     int max_particles;
-    Particle *particles;
     Vector2 origin;
     float lifetime;
 
-    union shape
+    enum {
+        RECTANGLE_EMITTER,
+        CIRCLE_EMITTER,
+        CONE_EMITTER
+    } emitterType;
+
+    union emitter
     {
-        struct RectangleEmmiter
-        {
-            Rectangle rect;
-            float angle;
-        };
-
-        struct SphereEmmiter
-        {
-            float radius;
-        };
-
-        struct ConeEmmiter
-        {
-            float angle;
-            float apperture_angle;
-        };
-    };
+        RectangleEmitter rectangleEmitter;
+        CircleEmitter circleEmitter;
+        ConeEmitter ConeEmitter;
+    } emitter;
 
     int min_size;
     int max_size;
 
+    int min_speed;
+    int max_speed;
+
     Color initial_color;
     Color final_color;
+
+    float timer;
+    Particle *particles;
 
 } ParticleSystem;
 
 void InitializeParticles(ParticleSystem* ps);
 void FreeParticles(ParticleSystem* ps);
+void UpdateParticleSystem(ParticleSystem* ps);
 void DrawParticleSystem(ParticleSystem* ps);
-void EmmitRectangleShape(ParticleSystem* ps);
-void EmmitSphereShape(ParticleSystem* ps);
-void EmmitConeShape(ParticleSystem* ps);
 
 #endif
