@@ -77,3 +77,4 @@ main.code-workspace
 obj
 main
 Makefile
+*.wav

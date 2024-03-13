@@ -12,7 +12,8 @@ void InitializeParticles(ParticleSystem* ps)
         exit(-1);
     }
 
-    ps->timer = PARTICLE_SPAWN_RATE;
+    ps->timer = ps->emission_rate;
+    ps->emitting = false;
 
     for (int i = 0; i < ps->max_particles; i++) 
     {
@@ -36,8 +37,11 @@ void UpdateParticleSystem(ParticleSystem* ps)
     switch (ps->emitterType)
     {
     case RECTANGLE_EMITTER:
-
-        ps->timer -= GetFrameTime();
+    
+        if (ps->emitting)
+        {
+            ps->timer -= GetFrameTime();
+        }
 
         if (ps->timer <= 0)
         {   
@@ -45,15 +49,21 @@ void UpdateParticleSystem(ParticleSystem* ps)
             {
                 if (!ps->particles[i].active)
                 {   
-                    // Initialize particle
+                    // Emit particle
                     ps->particles[i].position.y = ps->origin.y;
                     ps->particles[i].position.x = GetRandomValue(ps->origin.x, ps->origin.x + ps->emitter.rectangleEmitter.width);
+                    Vector2 direction = (Vector2){
+                        cos(ps->emitter.rectangleEmitter.angle * DEG2RAD), 
+                        sin(ps->emitter.rectangleEmitter.angle * DEG2RAD)
+                    };
+                    ps->particles[i].velocity = Vector2Scale(direction, ps->min_speed);
+                    ps->particles[i].size = GetRandomValue(ps->min_size, ps->max_size);
                     ps->particles[i].active = true;
                     break;
                 }
             }
             
-            ps->timer = PARTICLE_SPAWN_RATE;
+            ps->timer = ps->emission_rate;
             
         }
 
@@ -61,7 +71,7 @@ void UpdateParticleSystem(ParticleSystem* ps)
         {   
             if (!ps->particles[i].active) continue;
 
-            ps->particles[i].position.y += ps->min_speed * GetFrameTime();
+            ps->particles[i].position = Vector2Add(ps->particles[i].position, Vector2Scale(ps->particles[i].velocity, GetFrameTime()));
             ps->particles[i].lifetime -= GetFrameTime();
 
             if (ps->particles[i].lifetime <= 0)
@@ -86,6 +96,15 @@ void DrawParticleSystem(ParticleSystem* ps)
     for (int i = 0; i < ps->max_particles; i++)
     {
         if (!ps->particles[i].active) continue;
-        DrawCircleV(ps->particles[i].position, ps->min_size, ps->initial_color);
+        DrawCircleV(ps->particles[i].position, ps->particles[i].size, ps->initial_color);
+    }
+}
+
+void ResetParticleSystem(ParticleSystem* ps)
+{
+    for (int i = 0; i < ps->max_particles; i++)
+    {
+        if (!ps->particles[i].active) continue;
+        ps->particles[i].active = false;
     }
 }

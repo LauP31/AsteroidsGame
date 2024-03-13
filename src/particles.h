@@ -10,6 +10,7 @@ typedef struct Particle {
     Vector2 position;
     Vector2 velocity;
     float lifetime;
+    float size;
     bool active; 
 
 } Particle;
@@ -38,6 +39,8 @@ typedef struct ParticleSystem {
     int max_particles;
     Vector2 origin;
     float lifetime;
+    float emission_rate;
+    bool emitting;
 
     enum {
         RECTANGLE_EMITTER,
@@ -70,5 +73,6 @@ void InitializeParticles(ParticleSystem* ps);
 void FreeParticles(ParticleSystem* ps);
 void UpdateParticleSystem(ParticleSystem* ps);
 void DrawParticleSystem(ParticleSystem* ps);
+void ResetParticleSystem(ParticleSystem* ps);
 
 #endif

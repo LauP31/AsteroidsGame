@@ -15,6 +15,7 @@ int main(void)
 {
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Asteroids!");
+    InitAudioDevice();
     LoadGame();
     GameStart();
     #if defined(PLATFORM_WEB)
@@ -28,6 +29,7 @@ int main(void)
     #endif
     UnloadGame();
     
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;
