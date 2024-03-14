@@ -6,15 +6,15 @@
 // Create the particles pool and set some default parameters
 void InitializeParticles(ParticleSystem* ps)
 {
-    ps->particles = malloc(ps->max_particles * sizeof(Particle));
+    ps->particles = malloc(ps->maxParticles * sizeof(Particle));
     if (ps->particles == NULL)
     {
         exit(-1);
     }
 
-    ps->timer = ps->emission_rate;
+    ps->timer = ps->emissionRate;
 
-    for (int i = 0; i < ps->max_particles; i++) 
+    for (int i = 0; i < ps->maxParticles; i++) 
     {
         ps->particles[i].position = ps->origin;
         //ps->particles[i].velocity = ps->speed;
@@ -40,7 +40,7 @@ void UpdateParticleSystem(ParticleSystem* ps)
 
     if (ps->timer <= 0)
     {   
-        for (int i = 0; i < ps->max_particles; i++)
+        for (int i = 0; i < ps->maxParticles; i++)
         {
             if (!ps->particles[i].active)
             {   
@@ -52,17 +52,17 @@ void UpdateParticleSystem(ParticleSystem* ps)
                     sin(ps->angle * DEG2RAD)
                 };
                 ps->particles[i].velocity = Vector2Scale(direction, ps->speed);
-                ps->particles[i].size = GetRandomValue(ps->min_size, ps->max_size);
+                ps->particles[i].size = GetRandomValue(ps->minSize, ps->maxSize);
                 ps->particles[i].active = true;
                 break;
             }
         }
         
-        ps->timer = ps->emission_rate;
+        ps->timer = ps->emissionRate;
         
     }
 
-    for (int i = 0; i < ps->max_particles; i++) 
+    for (int i = 0; i < ps->maxParticles; i++) 
     {   
         if (!ps->particles[i].active) continue;
 
@@ -81,16 +81,16 @@ void UpdateParticleSystem(ParticleSystem* ps)
 
 void DrawParticleSystem(ParticleSystem* ps)
 {
-    for (int i = 0; i < ps->max_particles; i++)
+    for (int i = 0; i < ps->maxParticles; i++)
     {
         if (!ps->particles[i].active) continue;
-        DrawCircleV(ps->particles[i].position, ps->particles[i].size, ps->initial_color);
+        DrawCircleV(ps->particles[i].position, ps->particles[i].size, ps->color);
     }
 }
 
 void ResetParticleSystem(ParticleSystem* ps)
 {
-    for (int i = 0; i < ps->max_particles; i++)
+    for (int i = 0; i < ps->maxParticles; i++)
     {
         if (!ps->particles[i].active) continue;
         ps->particles[i].active = false;

@@ -17,21 +17,20 @@ typedef struct Particle {
 
 typedef struct ParticleSystem {
 
-    int max_particles;
+    int maxParticles;
     Vector2 origin;
     float lifetime;
-    float emission_rate;
+    float emissionRate;
     bool emitting;
     float width;
     float angle;
 
-    int min_size;
-    int max_size;
+    int minSize;
+    int maxSize;
 
     int speed;
 
-    Color initial_color;
-    Color final_color;
+    Color color;
 
     float timer;
     Particle *particles;

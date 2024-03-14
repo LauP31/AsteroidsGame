@@ -7,18 +7,16 @@
 #include "raymath.h"
 #include "particles.h"
 
-GameState _state;
+GameState state;
 
 // Time related vars
-float _timeGameStarted;
-float _timeGameEnded;
-float _asteroidSpawnTimer;
+float asteroidSpawnTimer;
 float flashTimer = 0;
 
 // Textures 
-Texture2D _ship_texture;
-Texture2D _asteroidTexture;
-Texture2D _starTexture;
+Texture2D shipTexture;
+Texture2D asteroidTexture;
+Texture2D starTexture;
 
 // Audio
 Music music;
@@ -27,9 +25,9 @@ Sound sfxStarPickup;
 Sound sfxThurster;
 
 // Game data
-Spaceship _ship;
+Spaceship starship;
 Asteroid asteroids[MAX_ASTEROIDS];
-Star _star;
+Star star;
 
 
 ParticleSystem starParticles;
@@ -37,21 +35,19 @@ ParticleSystem rocketParticles;
 
 int lives = STARTING_LIVES;
 int score = 0;
-int new_score = 0;
-float new_time = INITIAL_TIME_BETWEEN_ASTEROIDS;
-int min_asteroid_speed;
+int newScore = 0;
+float newTime = INITIAL_TIME_BETWEEN_ASTEROIDS;
+int minAsteroidSpeed;
 
 bool paused;
 bool muted;
 bool flashing;
 
-void FlashPlayer();
-
 void LoadGame(void)
 {
-    _ship_texture = LoadTexture("resources/playerShip1_blue.png");
-    _asteroidTexture = LoadTexture("resources/meteorBrown_big4.png");
-    _starTexture = LoadTexture("resources/star_gold.png");
+    shipTexture = LoadTexture("resources/playerShip1_blue.png");
+    asteroidTexture = LoadTexture("resources/meteorBrown_big4.png");
+    starTexture = LoadTexture("resources/star_gold.png");
 
     music = LoadMusicStream("resources/Mercury.wav");
     sfxExplosion = LoadSound("resources/explosion.wav");
@@ -60,12 +56,12 @@ void LoadGame(void)
 
 
     starParticles = (ParticleSystem){
-        .max_particles = 100,
+        .maxParticles = 100,
         .lifetime = 12.5,
-        .emission_rate = 0.5,
-        .min_size = 1,
-        .max_size = 3,
-        .initial_color = WHITE,
+        .emissionRate = 0.5,
+        .minSize = 1,
+        .maxSize = 3,
+        .color = WHITE,
         .speed = 80,
         .origin = (Vector2){0, 0},
         .width = 1000,
@@ -74,12 +70,12 @@ void LoadGame(void)
     };
 
     rocketParticles = (ParticleSystem){
-        .max_particles = 100,
+        .maxParticles = 100,
         .lifetime = 0.15,
-        .emission_rate = 0.05,
-        .min_size = 2,
-        .max_size = 4,
-        .initial_color = ORANGE,
+        .emissionRate = 0.05,
+        .minSize = 2,
+        .maxSize = 4,
+        .color = ORANGE,
         .speed = 150,
         .origin = (Vector2){-50,-50},
         .width = 15,
@@ -94,9 +90,9 @@ void LoadGame(void)
 void UnloadGame(void)
 {
     // Unload textures
-    UnloadTexture(_ship_texture);
-    UnloadTexture(_asteroidTexture);
-    UnloadTexture(_starTexture);
+    UnloadTexture(shipTexture);
+    UnloadTexture(asteroidTexture);
+    UnloadTexture(starTexture);
 
     // Unload audio
     UnloadMusicStream(music);
@@ -113,28 +109,27 @@ void GameStart(void)
 {   
     paused = false;
     PlayMusicStream(music);
-    _state = PLAYING;
-    _timeGameStarted = GetTime();
+    state = PLAYING;
 
     score = 0;
     lives = STARTING_LIVES;
-    new_score = 0;
-    new_time = INITIAL_TIME_BETWEEN_ASTEROIDS;
+    newScore = 0;
+    newTime = INITIAL_TIME_BETWEEN_ASTEROIDS;
     flashTimer = 0;
 
     // Intialize spaceship
-    _ship.acceleration = (Vector2){0,0};
-    _ship.velocity = (Vector2){0,0};
-    _ship.position = (Vector2){SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
-    _ship.rotation = 0;
-    _ship.radius = SPACESHIP_COL_RADIUS;
-    _ship.max_acc = SPACESHIP_ACCEL;
-    _ship.min_speed = SPACESHIP_MIN_VEL;
-    _ship.max_speed = SPACESHIP_MAX_VEL;
+    starship.acceleration = (Vector2){0,0};
+    starship.velocity = (Vector2){0,0};
+    starship.position = (Vector2){SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    starship.rotation = 0;
+    starship.radius = SPACESHIP_COL_RADIUS;
+    starship.max_acc = SPACESHIP_ACCEL;
+    starship.min_speed = SPACESHIP_MIN_VEL;
+    starship.max_speed = SPACESHIP_MAX_VEL;
 
     // Place star
     Vector2 starStartPos = (Vector2){SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 200};
-    SetStar(&_star, starStartPos, 40);
+    SetStar(&star, starStartPos, 40);
 
     ResetParticleSystem(&rocketParticles);
 
@@ -142,8 +137,7 @@ void GameStart(void)
 
 void GameEnd(void)
 {
-    _state = END;
-    _timeGameEnded = GetTime();
+    state = END;
     StopSound(sfxThurster);
     ClearAsteroids(asteroids);
     StopMusicStream(music);
@@ -161,7 +155,7 @@ void UpdateGame(void)
         UpdateParticleSystem(&starParticles);
     }
     
-    if (_state == END)
+    if (state == END)
     {   
         if (IsKeyPressed(KEY_R))
         {
@@ -186,12 +180,12 @@ void UpdateGame(void)
         }
 
         // Game update
-        UpdateSpaceship(&_ship);
+        UpdateSpaceship(&starship);
         UpdateStar();
         rocketParticles.emitting = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
         UpdateParticleSystem(&rocketParticles);
-        rocketParticles.origin = Vector2Add(_ship.position, Vector2Scale((Vector2){cos(rocketParticles.angle * DEG2RAD), sin(rocketParticles.angle * DEG2RAD)}, 40));
-        rocketParticles.angle = _ship.rotation + 90;
+        rocketParticles.origin = Vector2Add(starship.position, Vector2Scale((Vector2){cos(rocketParticles.angle * DEG2RAD), sin(rocketParticles.angle * DEG2RAD)}, 40));
+        rocketParticles.angle = starship.rotation + 90;
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !muted && !paused)
         {
@@ -206,32 +200,32 @@ void UpdateGame(void)
         // Spawn asteroids once the player has collected at least one star
         if (score > 0)
         {
-            _asteroidSpawnTimer -= GetFrameTime();
-            if (_asteroidSpawnTimer < 0)
+            asteroidSpawnTimer -= GetFrameTime();
+            if (asteroidSpawnTimer < 0)
             {
-                if (new_time > MAX_TIME_TIME_BETWEEN_ASTEROIDS)
+                if (newTime > MAX_TIME_TIME_BETWEEN_ASTEROIDS)
                 {
-                    new_time = new_score * (-0.0007) + INITIAL_TIME_BETWEEN_ASTEROIDS;
+                    newTime = newScore * (-0.0007) + INITIAL_TIME_BETWEEN_ASTEROIDS;
                 }
                 //new_time = fmax(new_time, MAX_TIME_TIME_BETWEEN_ASTEROIDS);
-                _asteroidSpawnTimer = new_time;
-                if (min_asteroid_speed < MAX_ASTEROID_SPEED)
+                asteroidSpawnTimer = newTime;
+                if (minAsteroidSpeed < MAX_ASTEROID_SPEED)
                 {
-                    min_asteroid_speed = new_score * 0.35 + INITIAL_ASTEROID_SPEED;  
+                    minAsteroidSpeed = newScore * 0.35 + INITIAL_ASTEROID_SPEED;  
                 }
-                int max_asteroid_speed = min_asteroid_speed + ASTEROID_SPEED_RANGE; 
-                int speed = GetRandomValue(min_asteroid_speed, max_asteroid_speed);
+                int max_asteroid_speed = minAsteroidSpeed + ASTEROID_SPEED_RANGE; 
+                int speed = GetRandomValue(minAsteroidSpeed, max_asteroid_speed);
                 //speed = fmin(speed, MAX_ASTEROID_SPEED);
                 SpawnAsteroid(asteroids, speed);
             }
             UpdateAsteroids();
         }
 
-        FlashPlayer();
+        HandlePlayerFlashing();
 
-       if (score >= new_score + 100)
+       if (score >= newScore + 100)
        {
-            new_score = score;
+            newScore = score;
        }
         
     }
@@ -243,7 +237,7 @@ void DrawGame(void)
     DrawFPS(0,0);
     DrawText("Mute: M\nPause: Space", 0, 20, 18, LIGHTGRAY);
     DrawParticleSystem(&starParticles);
-    if (_state == END)
+    if (state == END)
     {
         const char* scoreText = TextFormat("Highscore: %d", score);
         DrawText(scoreText, SCREEN_WIDTH/2-MeasureText(scoreText, 48)*0.5, 400, 48, YELLOW);
@@ -256,18 +250,18 @@ void DrawGame(void)
         DrawParticleSystem(&rocketParticles);    
         // Draw spaceship
         if (!flashing)
-        DrawTexturePro(_ship_texture,
+        DrawTexturePro(shipTexture,
                         SPACESHIP_SOURCE_RECT,
-                        (Rectangle){_ship.position.x, _ship.position.y, SPACESHIP_RECT_WIDTH, SPACESHIP_RECT_HEIGHT},
+                        (Rectangle){starship.position.x, starship.position.y, SPACESHIP_RECT_WIDTH, SPACESHIP_RECT_HEIGHT},
                         (Vector2){SPACESHIP_RECT_WIDTH/2, SPACESHIP_RECT_HEIGHT/2},
-                        _ship.rotation,
+                        starship.rotation,
                         WHITE);
 
         // Draw star
-        DrawTexture(_starTexture, _star.position.x - 15, _star.position.y - 15, WHITE);
+        DrawTexture(starTexture, star.position.x - 15, star.position.y - 15, WHITE);
 
         // Draw asteroids
-        DrawAsteroids(asteroids, _asteroidTexture);
+        DrawAsteroids(asteroids, asteroidTexture);
 
         // UI
         const char* livesText = TextFormat("Lives: %d", lives);
@@ -307,7 +301,7 @@ void UpdateAsteroids()
             continue;
         }
 
-        if (CheckCollisionCircles(_ship.position, _ship.radius, asteroids[i].position, asteroids[i].radius) && flashTimer <= 0)
+        if (CheckCollisionCircles(starship.position, starship.radius, asteroids[i].position, asteroids[i].radius) && flashTimer <= 0)
         {
             if (!muted) PlaySound(sfxExplosion);
 
@@ -329,15 +323,15 @@ void UpdateAsteroids()
 
 void UpdateStar()
 {
-    if (CheckCollisionCircles(_ship.position, _ship.radius, _star.position, _star.radius))
+    if (CheckCollisionCircles(starship.position, starship.radius, star.position, star.radius))
     {
         if (!muted) PlaySound(sfxStarPickup);
-        MoveStar(&_star);
+        MoveStar(&star);
         score += SCORE_PER_STAR;
     }
 }
 
-void FlashPlayer()
+void HandlePlayerFlashing()
 {
     if (flashTimer > 0)
     {   

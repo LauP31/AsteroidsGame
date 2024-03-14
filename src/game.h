@@ -15,5 +15,6 @@ void UpdateGame(void);
 void DrawGame(void);
 void UpdateAsteroids(void);
 void UpdateStar(void);
+void HandlePlayerFlashing();
 
 #endif

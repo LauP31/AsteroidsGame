@@ -13,6 +13,7 @@ int main(void)
     LoadGame();
     GameStart();
     SetTargetFPS(TARGET_FPS); 
+    
     while (!WindowShouldClose())
     {
         UpdateGame();
