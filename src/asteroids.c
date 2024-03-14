@@ -9,6 +9,7 @@ void SetAsteroidAt(Asteroid* asteroids, int i, Vector2 position, int speed, int 
     asteroids[i].speed = speed;
     asteroids[i].active = true;
     asteroids[i].radius = radius;
+    asteroids[i].rotation = GetRandomValue(0, 360);
 }
 
 void UnsetAsteroidAt(Asteroid * asteroids, int i)
@@ -28,12 +29,18 @@ void DrawAsteroids(Asteroid* asteroids, Texture2D texture)
         Vector2 position = asteroids[i].position;
         position.x -= ASTEROID_RECT_WIDTH / 2;
         position.y -= ASTEROID_RECT_HEIGHT / 2;
-        DrawTexture(texture, position.x, position.y, WHITE);
+        DrawTexturePro(texture,
+                        ASTEROID_SOURCE_RECT,
+                        (Rectangle){asteroids[i].position.x, asteroids[i].position.y, ASTEROID_RECT_WIDTH, ASTEROID_RECT_HEIGHT},
+                        (Vector2){ASTEROID_RECT_WIDTH/2, ASTEROID_RECT_HEIGHT/2},
+                        asteroids[i].rotation,
+                        WHITE);
+        //DrawTexture(texture, position.x, position.y, WHITE);
         //DrawCircleLines(asteroids[i].position.x, asteroids[i].position.y, asteroids[i].radius, WHITE);
     }
 }
 
-void SpawnAsteroid(Asteroid* asteroids)
+void SpawnAsteroid(Asteroid* asteroids, int speed)
 {
     int avaliableIndex = -1;
     for (int i = 0; i < MAX_ASTEROIDS; i++)
@@ -47,7 +54,6 @@ void SpawnAsteroid(Asteroid* asteroids)
     
     if (avaliableIndex == -1) return;
 
-    int speed = GetRandomValue(400, 550);
     int posX = GetRandomValue(ASTEROID_RECT_WIDTH / 2, SCREEN_WIDTH - ASTEROID_RECT_WIDTH / 2);
     
     SetAsteroidAt(asteroids, avaliableIndex, (Vector2){posX, -200}, speed, 35);
