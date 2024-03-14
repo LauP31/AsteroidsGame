@@ -17,12 +17,9 @@ void InitializeParticles(ParticleSystem* ps)
     for (int i = 0; i < ps->maxParticles; i++) 
     {
         ps->particles[i].position = ps->origin;
-        //ps->particles[i].velocity = ps->speed;
         ps->particles[i].lifetime = ps->lifetime;
         ps->particles[i].active = false;
     }
-
-    //printf("PARTICLE EMITTER ENUM INDEX: %lu \n", ps->emitterType);
 
 }
 

@@ -207,7 +207,7 @@ void UpdateGame(void)
                 {
                     newTime = newScore * (-0.0007) + INITIAL_TIME_BETWEEN_ASTEROIDS;
                 }
-                //new_time = fmax(new_time, MAX_TIME_TIME_BETWEEN_ASTEROIDS);
+                
                 asteroidSpawnTimer = newTime;
                 if (minAsteroidSpeed < MAX_ASTEROID_SPEED)
                 {
@@ -215,7 +215,7 @@ void UpdateGame(void)
                 }
                 int max_asteroid_speed = minAsteroidSpeed + ASTEROID_SPEED_RANGE; 
                 int speed = GetRandomValue(minAsteroidSpeed, max_asteroid_speed);
-                //speed = fmin(speed, MAX_ASTEROID_SPEED);
+                
                 SpawnAsteroid(asteroids, speed);
             }
             UpdateAsteroids();
