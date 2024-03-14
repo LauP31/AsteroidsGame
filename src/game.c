@@ -4,7 +4,6 @@
 #include "spaceship.h"
 #include "asteroids.h"
 #include "star.h"
-#include <stdio.h>
 #include "raymath.h"
 #include "particles.h"
 
@@ -58,6 +57,7 @@ void LoadGame(void)
     sfxExplosion = LoadSound("resources/explosion.wav");
     sfxStarPickup = LoadSound("resources/star_pickup.wav");
     sfxThurster = LoadSound("resources/thruster.ogg");
+
 
     starParticles = (ParticleSystem){
         .max_particles = 100,
@@ -190,7 +190,7 @@ void UpdateGame(void)
         UpdateStar();
         rocketParticles.emitting = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
         UpdateParticleSystem(&rocketParticles);
-        rocketParticles.origin = Vector2Add(_ship.position, Vector2Scale((Vector2){cos((_ship.rotation + 90) * DEG2RAD), sin((_ship.rotation + 90) * DEG2RAD)}, 40));
+        rocketParticles.origin = Vector2Add(_ship.position, Vector2Scale((Vector2){cos(rocketParticles.angle * DEG2RAD), sin(rocketParticles.angle * DEG2RAD)}, 40));
         rocketParticles.angle = _ship.rotation + 90;
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !muted && !paused)
@@ -232,9 +232,6 @@ void UpdateGame(void)
        if (score >= new_score + 100)
        {
             new_score = score;
-            printf("INCREASING DIFFICULTY\n");
-            printf("NEW SPEED: %d\n", min_asteroid_speed);
-            printf("NEW TIME: %f\n", new_time);
        }
         
     }
