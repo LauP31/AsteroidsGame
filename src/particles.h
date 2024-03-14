@@ -15,25 +15,6 @@ typedef struct Particle {
 
 } Particle;
 
-
-typedef struct RectangleEmitter
-{
-    float width;
-    float height;
-    float angle;
-} RectangleEmitter;
-
-typedef struct CircleEmitter
-{
-    float radius;
-} CircleEmitter;
-
-typedef struct ConeEmitter
-{
-    float angle;
-    float apperture_angle;
-} ConeEmitter;
-
 typedef struct ParticleSystem {
 
     int max_particles;
@@ -41,25 +22,13 @@ typedef struct ParticleSystem {
     float lifetime;
     float emission_rate;
     bool emitting;
-
-    enum {
-        RECTANGLE_EMITTER,
-        CIRCLE_EMITTER,
-        CONE_EMITTER
-    } emitterType;
-
-    union emitter
-    {
-        RectangleEmitter rectangleEmitter;
-        CircleEmitter circleEmitter;
-        ConeEmitter ConeEmitter;
-    } emitter;
+    float width;
+    float angle;
 
     int min_size;
     int max_size;
 
-    int min_speed;
-    int max_speed;
+    int speed;
 
     Color initial_color;
     Color final_color;
