@@ -16,5 +16,5 @@ Requirements: [raylib](https://github.com/raysan5/raylib)
 Windows:\
 `gcc -o game.exe src/*.h src/*.c -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -s -O1 -I./include -L./lib -lraylib -lopengl32 -lgdi32 -lwinmm -mwindows -DPLATFORM_DESKTOP`
 
-Linux:
+Linux:\
 `gcc -o game src/*.h src/*.c -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -s -O1 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -DPLATFORM_DESKTOP`
